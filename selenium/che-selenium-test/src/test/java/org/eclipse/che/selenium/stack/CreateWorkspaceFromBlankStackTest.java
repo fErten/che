@@ -11,23 +11,14 @@
 package org.eclipse.che.selenium.stack;
 
 import static org.eclipse.che.commons.lang.NameGenerator.generate;
-import static org.eclipse.che.selenium.pageobject.ProjectExplorer.FolderTypes.PROJECT_FOLDER;
 import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.BLANK;
 
 import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
-import org.eclipse.che.selenium.core.webdriver.SeleniumWebDriverHelper;
 import org.eclipse.che.selenium.pageobject.CodenvyEditor;
-import org.eclipse.che.selenium.pageobject.Ide;
-import org.eclipse.che.selenium.pageobject.MavenPluginStatusBar;
-import org.eclipse.che.selenium.pageobject.NotificationsPopupPanel;
 import org.eclipse.che.selenium.pageobject.ProjectExplorer;
-import org.eclipse.che.selenium.pageobject.ToastLoader;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
-import org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace;
-import org.eclipse.che.selenium.pageobject.dashboard.ProjectSourcePage;
-import org.eclipse.che.selenium.pageobject.dashboard.workspaces.Workspaces;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -37,18 +28,11 @@ public class CreateWorkspaceFromBlankStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
   private static final String PROJECT_NAME = "blank-project";
 
-  @Inject private Ide ide;
   @Inject private Dashboard dashboard;
   @Inject private CodenvyEditor editor;
-  @Inject private Workspaces workspaces;
-  @Inject private ToastLoader toastLoader;
-  @Inject private NewWorkspace newWorkspace;
+  @Inject private StackHelper stackHelper;
   @Inject private DefaultTestUser defaultTestUser;
   @Inject private ProjectExplorer projectExplorer;
-  @Inject private ProjectSourcePage projectSourcePage;
-  @Inject private MavenPluginStatusBar mavenPluginStatusBar;
-  @Inject private NotificationsPopupPanel notificationsPopupPanel;
-  @Inject private SeleniumWebDriverHelper seleniumWebDriverHelper;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -63,46 +47,15 @@ public class CreateWorkspaceFromBlankStackTest {
 
   @Test
   public void createWorkspaceFromBlankStackTest() {
-    createWorkspaceWithProjectFromStack(BLANK, WORKSPACE_NAME, PROJECT_NAME);
+    stackHelper.createWorkspaceWithProjectFromStack(BLANK, WORKSPACE_NAME, PROJECT_NAME);
 
-    switchToIdeAndWaitWorkspaceIsReadyToUse();
+    stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    waitProjectInitialization(PROJECT_NAME);
+    stackHelper.waitProjectInitialization(PROJECT_NAME);
 
     projectExplorer.openItemByPath(PROJECT_NAME);
     projectExplorer.openItemByPath(PROJECT_NAME + "/README.md");
     editor.waitActive();
     editor.waitTabIsPresent("README.md");
-  }
-
-  private void createWorkspaceWithProjectFromStack(
-      NewWorkspace.Stack stack, String workspaceName, String projectName) {
-    dashboard.waitDashboardToolbarTitle();
-    dashboard.selectWorkspacesItemOnDashboard();
-    workspaces.clickOnAddWorkspaceBtn();
-    newWorkspace.waitToolbar();
-
-    newWorkspace.clickOnAllStacksTab();
-    newWorkspace.selectStack(stack);
-    newWorkspace.typeWorkspaceName(workspaceName);
-    projectSourcePage.clickOnAddOrImportProjectButton();
-    projectSourcePage.selectSample(projectName);
-    projectSourcePage.clickOnAddProjectButton();
-
-    newWorkspace.clickOnCreateButtonAndOpenInIDE();
-  }
-
-  private void switchToIdeAndWaitWorkspaceIsReadyToUse() {
-    seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
-    toastLoader.waitToastLoaderAndClickStartButton();
-    ide.waitOpenedWorkspaceIsReadyToUse();
-  }
-
-  private void waitProjectInitialization(String projectName) {
-    projectExplorer.waitItem(projectName);
-    notificationsPopupPanel.waitPopupPanelsAreClosed();
-    mavenPluginStatusBar.waitClosingInfoPanel();
-    projectExplorer.waitDefinedTypeOfFolder(projectName, PROJECT_FOLDER);
-    notificationsPopupPanel.waitPopupPanelsAreClosed();
   }
 }
