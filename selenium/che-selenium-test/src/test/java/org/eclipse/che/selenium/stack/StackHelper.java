@@ -12,7 +12,7 @@
 package org.eclipse.che.selenium.stack;
 
 import static org.eclipse.che.selenium.core.constant.TestTimeoutsConstants.ELEMENT_TIMEOUT_SEC;
-import static org.eclipse.che.selenium.core.constant.TestTimeoutsConstants.WIDGET_TIMEOUT_SEC;
+import static org.eclipse.che.selenium.core.constant.TestTimeoutsConstants.PREPARING_WS_TIMEOUT_SEC;
 import static org.eclipse.che.selenium.pageobject.ProjectExplorer.FolderTypes.PROJECT_FOLDER;
 
 import com.google.inject.Inject;
@@ -23,6 +23,7 @@ import org.eclipse.che.selenium.core.webdriver.SeleniumWebDriverHelper;
 import org.eclipse.che.selenium.pageobject.CodenvyEditor;
 import org.eclipse.che.selenium.pageobject.Consoles;
 import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.MavenPluginStatusBar;
 import org.eclipse.che.selenium.pageobject.NotificationsPopupPanel;
 import org.eclipse.che.selenium.pageobject.ProjectExplorer;
 import org.eclipse.che.selenium.pageobject.ToastLoader;
@@ -32,6 +33,7 @@ import org.eclipse.che.selenium.pageobject.dashboard.ProjectSourcePage;
 import org.eclipse.che.selenium.pageobject.dashboard.workspaces.Workspaces;
 import org.openqa.selenium.By;
 
+/** @author Skoryk Serhii */
 public class StackHelper {
 
   @Inject private Ide ide;
@@ -44,16 +46,88 @@ public class StackHelper {
   @Inject private ProjectExplorer projectExplorer;
   @Inject private SeleniumWebDriver seleniumWebDriver;
   @Inject private ProjectSourcePage projectSourcePage;
+  @Inject private MavenPluginStatusBar mavenPluginStatusBar;
   @Inject private NotificationsPopupPanel notificationsPopupPanel;
   @Inject private SeleniumWebDriverHelper seleniumWebDriverHelper;
+
+  // Start command from project context menu and check expected message in Terminal
+  public void startCommandAndCheckResult(
+      String projectName,
+      ContextMenuCommandGoals goal,
+      String commandName,
+      String expectedMessageInTerminal) {
+    projectExplorer.waitAndSelectItem(projectName);
+    projectExplorer.invokeCommandWithContextMenu(goal, projectName, commandName);
+
+    consoles.waitTabNameProcessIsPresent(commandName);
+    consoles.waitProcessInProcessConsoleTree(commandName);
+    consoles.waitExpectedTextIntoConsole(expectedMessageInTerminal, PREPARING_WS_TIMEOUT_SEC);
+  }
+  // Open web page by url and check visibility of web element on opened page
+  public void startCommandAndCheckApp(String currentWindow, String webElementXpath) {
+    consoles.waitPreviewUrlIsPresent();
+    consoles.clickOnPreviewUrl();
+    seleniumWebDriverHelper.switchToNextWindow(currentWindow);
+
+    seleniumWebDriverHelper.waitVisibility(By.xpath(webElementXpath));
+
+    seleniumWebDriver.close();
+    seleniumWebDriver.switchTo().window(currentWindow);
+    seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
+  }
+
+  // Open file and check LS initialization message in "dev-machine" process
+  public void checkLanguageServerInitialization(
+      String projectName, String fileName, String textInTerminal) {
+    consoles.selectProcessByTabName("dev-machine");
+    projectExplorer.waitAndSelectItem(projectName);
+    projectExplorer.openItemByPath(projectName);
+    projectExplorer.openItemByPath(projectName + "/" + fileName);
+    editor.waitTabIsPresent(fileName);
+
+    consoles.waitExpectedTextIntoConsole(textInTerminal, ELEMENT_TIMEOUT_SEC);
+  }
+
+  // Switch from Dashboard to IDE and check that workspace is ready to use
+  public String switchToIdeAndWaitWorkspaceIsReadyToUse() {
+    String currentWindow = seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
+    toastLoader.waitToastLoaderAndClickStartButton();
+    ide.waitOpenedWorkspaceIsReadyToUse();
+
+    return currentWindow;
+  }
+
+  // Wait for project has PROJECT_FOLDER status
+  public void waitProjectInitialization(String projectName) {
+    projectExplorer.waitItem(projectName);
+    notificationsPopupPanel.waitPopupPanelsAreClosed();
+    projectExplorer.waitDefinedTypeOfFolder(projectName, PROJECT_FOLDER);
+  }
+
+  public void createWorkspaceWithProjectFromStack(
+      NewWorkspace.Stack stack, String workspaceName, String projectName) {
+    dashboard.waitDashboardToolbarTitle();
+    dashboard.selectWorkspacesItemOnDashboard();
+    workspaces.clickOnAddWorkspaceBtn();
+
+    newWorkspace.waitToolbar();
+    newWorkspace.clickOnAllStacksTab();
+    newWorkspace.selectStack(stack);
+    newWorkspace.typeWorkspaceName(workspaceName);
+    projectSourcePage.clickOnAddOrImportProjectButton();
+    projectSourcePage.selectSample(projectName);
+    projectSourcePage.clickOnAddProjectButton();
+
+    newWorkspace.clickOnCreateButtonAndOpenInIDE();
+  }
 
   public void createWorkspaceWithProjectsFromStack(
       NewWorkspace.Stack stack, String workspaceName, ArrayList<String> projectNames) {
     dashboard.waitDashboardToolbarTitle();
     dashboard.selectWorkspacesItemOnDashboard();
     workspaces.clickOnAddWorkspaceBtn();
-    newWorkspace.waitToolbar();
 
+    newWorkspace.waitToolbar();
     newWorkspace.clickOnAllStacksTab();
     newWorkspace.selectStack(stack);
     newWorkspace.typeWorkspaceName(workspaceName);
@@ -65,81 +139,6 @@ public class StackHelper {
         });
 
     projectSourcePage.clickOnAddProjectButton();
-    newWorkspace.clickOnCreateButtonAndOpenInIDE();
-  }
-
-  public void startCommandAndCheckResult(
-      String projectName,
-      ContextMenuCommandGoals goal,
-      String commandName,
-      String expectedMessageInTerminal) {
-    projectExplorer.waitAndSelectItem(projectName);
-    projectExplorer.invokeCommandWithContextMenu(goal, projectName, commandName);
-
-    consoles.waitTabNameProcessIsPresent(commandName);
-    consoles.waitProcessInProcessConsoleTree(commandName);
-    consoles.waitExpectedTextIntoConsole(expectedMessageInTerminal, WIDGET_TIMEOUT_SEC);
-  }
-
-  public void startCommandAndCheckApp(String currentWindow, String xpath) {
-    consoles.waitPreviewUrlIsPresent();
-    consoles.clickOnPreviewUrl();
-    seleniumWebDriverHelper.switchToNextWindow(currentWindow);
-
-    seleniumWebDriverHelper.waitVisibility(By.xpath(xpath));
-
-    seleniumWebDriver.close();
-    seleniumWebDriver.switchTo().window(currentWindow);
-    seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
-  }
-
-  public void checkLanguageServerInitialization(
-      String projectName, String fileName, String textInTerminal) {
-    projectExplorer.waitAndSelectItem(projectName);
-    projectExplorer.openItemByPath(projectName);
-    projectExplorer.openItemByPath(projectName + "/" + fileName);
-    editor.waitTabIsPresent(fileName);
-
-    // check a language server initialized
-    consoles.selectProcessByTabName("dev-machine");
-    consoles.waitExpectedTextIntoConsole(textInTerminal, ELEMENT_TIMEOUT_SEC);
-  }
-
-  public String switchToIdeAndWaitWorkspaceIsReadyToUse() {
-    String currentWindow = seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
-    toastLoader.waitToastLoaderAndClickStartButton();
-    ide.waitOpenedWorkspaceIsReadyToUse();
-
-    return currentWindow;
-  }
-
-  public void waitProjectInitialization(String projectName) {
-    projectExplorer.waitItem(projectName);
-    notificationsPopupPanel.waitPopupPanelsAreClosed();
-    projectExplorer.waitDefinedTypeOfFolder(projectName, PROJECT_FOLDER);
-  }
-
-  /**
-   * Create workspace on Dashboard from @stack with @name with @projectName project
-   *
-   * @param stack
-   * @param name
-   * @param projectName
-   */
-  public void createWorkspaceWithProjectFromStack(
-      NewWorkspace.Stack stack, String name, String projectName) {
-    dashboard.waitDashboardToolbarTitle();
-    dashboard.selectWorkspacesItemOnDashboard();
-    workspaces.clickOnAddWorkspaceBtn();
-    newWorkspace.waitToolbar();
-
-    newWorkspace.clickOnAllStacksTab();
-    newWorkspace.selectStack(stack);
-    newWorkspace.typeWorkspaceName(name);
-    projectSourcePage.clickOnAddOrImportProjectButton();
-    projectSourcePage.selectSample(projectName);
-    projectSourcePage.clickOnAddProjectButton();
-
     newWorkspace.clickOnCreateButtonAndOpenInIDE();
   }
 }
