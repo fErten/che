@@ -60,6 +60,8 @@ public class StackHelper {
       String commandName,
       String expectedMessageInTerminal) {
     projectExplorer.waitAndSelectItem(projectName);
+    // TODO check issue about item selection while projects have long name
+    projectExplorer.waitAndSelectItem(projectName);
     projectExplorer.invokeCommandWithContextMenu(goal, projectName, commandName);
 
     consoles.waitTabNameProcessIsPresent(commandName);

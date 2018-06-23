@@ -29,7 +29,7 @@ public class CreateWorkspaceFromGoStackTest {
   private static final String DESKTOP_GO_SIMPLE_PROJECT = "desktop-go-simple";
   private static final String WEB_GO_SIMPLE_PROJECT = "web-go-simple";
 
-  ArrayList<String> projects = new ArrayList<>();
+  private ArrayList<String> projects = new ArrayList<>();
 
   @Inject private Dashboard dashboard;
   @Inject private StackHelper stackHelper;

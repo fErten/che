@@ -11,9 +11,11 @@
 package org.eclipse.che.selenium.stack;
 
 import static org.eclipse.che.commons.lang.NameGenerator.generate;
+import static org.eclipse.che.selenium.core.constant.TestBuildConstants.BUILD_SUCCESS;
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.BUILD;
+import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.DEBUG;
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.RUN;
-import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.RAILS;
+import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.SPRING_BOOT;
 
 import com.google.inject.Inject;
 import java.util.ArrayList;
@@ -25,10 +27,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** @author Skoryk Serhii */
-public class CreateWorkspaceFromRailsStackTest {
+public class CreateWorkspaceFromSpringBootStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
-  private static final String CONSOLE_RUBY_SIMPLE_PROJECT = "console-ruby-simple";
-  private static final String WEB_RAILS_SIMPLE_PROJECT = "web-rails-simple";
+  private static final String SPRING_BOOT_HEALTH_CHECK_BOOSTER = "spring-boot-health-check-booster";
+  private static final String SPRING_BOOT_HTTP_BOOSTER = "spring-boot-http-booster";
 
   private ArrayList<String> projects = new ArrayList<>();
 
@@ -39,8 +41,8 @@ public class CreateWorkspaceFromRailsStackTest {
 
   @BeforeClass
   public void setUp() {
-    projects.add(CONSOLE_RUBY_SIMPLE_PROJECT);
-    projects.add(WEB_RAILS_SIMPLE_PROJECT);
+    projects.add(SPRING_BOOT_HEALTH_CHECK_BOOSTER);
+    projects.add(SPRING_BOOT_HTTP_BOOSTER);
 
     dashboard.open();
   }
@@ -51,33 +53,42 @@ public class CreateWorkspaceFromRailsStackTest {
   }
 
   @Test
-  public void checkWorkspaceCreationFromRailsStack() {
+  public void checkWorkspaceCreationFromSpringBootStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(RAILS, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceWithProjectsFromStack(SPRING_BOOT, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(CONSOLE_RUBY_SIMPLE_PROJECT);
-    stackHelper.waitProjectInitialization(WEB_RAILS_SIMPLE_PROJECT);
+    stackHelper.waitProjectInitialization(SPRING_BOOT_HEALTH_CHECK_BOOSTER);
+    stackHelper.waitProjectInitialization(SPRING_BOOT_HTTP_BOOSTER);
+
+    stackHelper.startCommandAndCheckResult(SPRING_BOOT_HTTP_BOOSTER, BUILD, "build", BUILD_SUCCESS);
 
     stackHelper.startCommandAndCheckResult(
-        CONSOLE_RUBY_SIMPLE_PROJECT, RUN, "console-ruby-simple:run", "Hello world!");
+        SPRING_BOOT_HTTP_BOOSTER, BUILD, "clean build", BUILD_SUCCESS);
 
     stackHelper.startCommandAndCheckResult(
-        WEB_RAILS_SIMPLE_PROJECT, BUILD, "install dependencies", "Bundle complete!");
-    stackHelper.startCommandAndCheckResult(
-        WEB_RAILS_SIMPLE_PROJECT,
-        BUILD,
-        "web-rails-simple:install dependencies",
-        "Bundle complete!");
-
-    stackHelper.startCommandAndCheckResult(WEB_RAILS_SIMPLE_PROJECT, RUN, "run", "* Listening on");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h1[text()='Yay! You’re on Rails!']");
+        SPRING_BOOT_HTTP_BOOSTER, RUN, "run", "INFO: Setting the server's publish address to be");
+    stackHelper.startCommandAndCheckApp(currentWindow, "//h2[text()='HTTP Booster']");
     stackHelper.closeProcessTabWithAskDialog("run");
 
     stackHelper.startCommandAndCheckResult(
-        WEB_RAILS_SIMPLE_PROJECT, RUN, "web-rails-simple:run", "* Listening on");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h1[text()='Yay! You’re on Rails!']");
+        SPRING_BOOT_HEALTH_CHECK_BOOSTER, BUILD, "build", BUILD_SUCCESS);
+
+    stackHelper.startCommandAndCheckResult(
+        SPRING_BOOT_HEALTH_CHECK_BOOSTER, BUILD, "clean build", BUILD_SUCCESS);
+
+    stackHelper.startCommandAndCheckResult(
+        SPRING_BOOT_HEALTH_CHECK_BOOSTER, RUN, "run", "Started BoosterApplication in");
+    stackHelper.startCommandAndCheckApp(currentWindow, "//h2[text()='Health Check Booster']");
+    stackHelper.closeProcessTabWithAskDialog("run");
+
+    stackHelper.startCommandAndCheckResult(
+        SPRING_BOOT_HEALTH_CHECK_BOOSTER,
+        DEBUG,
+        "debug",
+        "Listening for transport dt_socket at address: 5005");
+    stackHelper.closeProcessTabWithAskDialog("debug");
   }
 }

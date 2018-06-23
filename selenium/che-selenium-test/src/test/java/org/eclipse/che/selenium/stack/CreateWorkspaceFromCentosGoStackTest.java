@@ -13,7 +13,6 @@ package org.eclipse.che.selenium.stack;
 import static org.eclipse.che.commons.lang.NameGenerator.generate;
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.RUN;
 import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.CENTOS_GO;
-import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.GO;
 
 import com.google.inject.Inject;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class CreateWorkspaceFromCentosGoStackTest {
   private static final String DESKTOP_GO_SIMPLE_PROJECT = "desktop-go-simple";
   private static final String WEB_GO_SIMPLE_PROJECT = "web-go-simple";
 
-  ArrayList<String> projects = new ArrayList<>();
+  private ArrayList<String> projects = new ArrayList<>();
 
   @Inject private Dashboard dashboard;
   @Inject private StackHelper stackHelper;
@@ -51,7 +50,7 @@ public class CreateWorkspaceFromCentosGoStackTest {
   }
 
   @Test
-  public void checkWorkspaceCreationFromGoStack() {
+  public void checkWorkspaceCreationFromCentosGoStack() {
     String currentWindow;
 
     stackHelper.createWorkspaceWithProjectsFromStack(CENTOS_GO, WORKSPACE_NAME, projects);

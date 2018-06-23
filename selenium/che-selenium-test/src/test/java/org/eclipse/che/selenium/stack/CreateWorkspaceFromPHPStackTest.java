@@ -10,6 +10,7 @@
  */
 package org.eclipse.che.selenium.stack;
 
+import static java.lang.String.format;
 import static org.eclipse.che.commons.lang.NameGenerator.generate;
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.RUN;
 import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.PHP;
@@ -34,7 +35,7 @@ public class CreateWorkspaceFromPHPStackTest {
   private static final String PROJECT_NAME = "web-php-simple";
   private static final String PHP_FILE_NAME = "index.php";
   private static final String LS_INIT_MESSAGE =
-      String.format(
+      format(
           "Finished language servers initialization, file path '/%s/%s'",
           PROJECT_NAME, PHP_FILE_NAME);
 
