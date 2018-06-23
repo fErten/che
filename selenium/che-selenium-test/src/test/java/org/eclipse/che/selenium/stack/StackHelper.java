@@ -63,6 +63,18 @@ public class StackHelper {
     consoles.waitProcessInProcessConsoleTree(commandName);
     consoles.waitExpectedTextIntoConsole(expectedMessageInTerminal, PREPARING_WS_TIMEOUT_SEC);
   }
+
+  public void startCommandFromProcessesArea(
+      String machineName,
+      ContextMenuCommandGoals goal,
+      String commandName,
+      String expectedMessageInTerminal) {
+    consoles.startCommandFromProcessesArea(machineName, goal, commandName);
+    consoles.waitTabNameProcessIsPresent(commandName);
+    consoles.waitProcessInProcessConsoleTree(commandName);
+    consoles.waitExpectedTextIntoConsole(expectedMessageInTerminal, PREPARING_WS_TIMEOUT_SEC);
+  }
+
   // Open web page by url and check visibility of web element on opened page
   public void startCommandAndCheckApp(String currentWindow, String webElementXpath) {
     consoles.waitPreviewUrlIsPresent();

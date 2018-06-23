@@ -11,10 +11,7 @@
 package org.eclipse.che.selenium.stack;
 
 import static org.eclipse.che.commons.lang.NameGenerator.generate;
-import static org.eclipse.che.selenium.core.constant.TestBuildConstants.BUILD_SUCCESS;
-import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.BUILD;
-import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.RUN;
-import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.CENTOS_WILDFLY_SWARM;
+import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.KOTLIN;
 
 import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
@@ -25,9 +22,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** @author Skoryk Serhii */
-public class CreateWorkspaceFromCentosWildFlySwarmTest {
+public class CreateWorkspaceFromKotlinStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
-  private static final String PROJECT_NAME = "wfswarm-rest-http";
+  private static final String PROJECT_NAME = "web-java-petclinic";
 
   @Inject private Dashboard dashboard;
   @Inject private StackHelper stackHelper;
@@ -46,17 +43,8 @@ public class CreateWorkspaceFromCentosWildFlySwarmTest {
 
   @Test
   public void createWorkspaceFromBlankStackTest() {
-    String currentWindow;
+    stackHelper.createWorkspaceWithProjectFromStack(KOTLIN, WORKSPACE_NAME, PROJECT_NAME);
 
-    stackHelper.createWorkspaceWithProjectFromStack(
-        CENTOS_WILDFLY_SWARM, WORKSPACE_NAME, PROJECT_NAME);
-
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
-
-    stackHelper.waitProjectInitialization(PROJECT_NAME);
-
-    stackHelper.startCommandAndCheckResult(PROJECT_NAME, BUILD, "build", BUILD_SUCCESS);
-    stackHelper.startCommandAndCheckResult(PROJECT_NAME, RUN, "run", "WildFly Swarm is Ready");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h2[@id='_http_booster']");
+    stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
   }
 }
