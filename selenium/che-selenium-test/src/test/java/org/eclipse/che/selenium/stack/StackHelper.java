@@ -11,6 +11,7 @@
 
 package org.eclipse.che.selenium.stack;
 
+import static java.lang.String.format;
 import static org.eclipse.che.selenium.core.constant.TestTimeoutsConstants.ELEMENT_TIMEOUT_SEC;
 import static org.eclipse.che.selenium.core.constant.TestTimeoutsConstants.PREPARING_WS_TIMEOUT_SEC;
 import static org.eclipse.che.selenium.pageobject.ProjectExplorer.FolderTypes.PROJECT_FOLDER;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import org.eclipse.che.selenium.core.SeleniumWebDriver;
 import org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals;
 import org.eclipse.che.selenium.core.webdriver.SeleniumWebDriverHelper;
+import org.eclipse.che.selenium.pageobject.AskDialog;
 import org.eclipse.che.selenium.pageobject.CodenvyEditor;
 import org.eclipse.che.selenium.pageobject.Consoles;
 import org.eclipse.che.selenium.pageobject.Ide;
@@ -39,6 +41,7 @@ public class StackHelper {
   @Inject private Ide ide;
   @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
+  @Inject private AskDialog askDialog;
   @Inject private CodenvyEditor editor;
   @Inject private Workspaces workspaces;
   @Inject private ToastLoader toastLoader;
@@ -133,6 +136,20 @@ public class StackHelper {
     newWorkspace.clickOnCreateButtonAndOpenInIDE();
   }
 
+  public void createWorkspaceWithoutProjectFromStack(
+      NewWorkspace.Stack stack, String workspaceName) {
+    dashboard.waitDashboardToolbarTitle();
+    dashboard.selectWorkspacesItemOnDashboard();
+    workspaces.clickOnAddWorkspaceBtn();
+
+    newWorkspace.waitToolbar();
+    newWorkspace.clickOnAllStacksTab();
+    newWorkspace.selectStack(stack);
+    newWorkspace.typeWorkspaceName(workspaceName);
+
+    newWorkspace.clickOnCreateButtonAndOpenInIDE();
+  }
+
   public void createWorkspaceWithProjectsFromStack(
       NewWorkspace.Stack stack, String workspaceName, ArrayList<String> projectNames) {
     dashboard.waitDashboardToolbarTitle();
@@ -152,5 +169,16 @@ public class StackHelper {
 
     projectSourcePage.clickOnAddProjectButton();
     newWorkspace.clickOnCreateButtonAndOpenInIDE();
+  }
+
+  public void closeProcessTabWithAskDialog(String tabName) {
+    String message =
+        format(
+            "The process %s will be terminated after closing console. Do you want to continue?",
+            tabName);
+    consoles.waitProcessInProcessConsoleTree(tabName);
+    consoles.closeProcessByTabName(tabName);
+    askDialog.acceptDialogWithText(message);
+    consoles.waitProcessIsNotPresentInProcessConsoleTree(tabName);
   }
 }

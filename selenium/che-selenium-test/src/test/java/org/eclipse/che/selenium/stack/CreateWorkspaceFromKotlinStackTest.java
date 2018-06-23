@@ -24,7 +24,6 @@ import org.testng.annotations.Test;
 /** @author Skoryk Serhii */
 public class CreateWorkspaceFromKotlinStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
-  private static final String PROJECT_NAME = "web-java-petclinic";
 
   @Inject private Dashboard dashboard;
   @Inject private StackHelper stackHelper;
@@ -43,7 +42,7 @@ public class CreateWorkspaceFromKotlinStackTest {
 
   @Test
   public void createWorkspaceFromBlankStackTest() {
-    stackHelper.createWorkspaceWithProjectFromStack(KOTLIN, WORKSPACE_NAME, PROJECT_NAME);
+    stackHelper.createWorkspaceWithoutProjectFromStack(KOTLIN, WORKSPACE_NAME);
 
     stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
   }
