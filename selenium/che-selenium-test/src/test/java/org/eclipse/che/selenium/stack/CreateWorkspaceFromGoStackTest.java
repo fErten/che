@@ -50,7 +50,7 @@ public class CreateWorkspaceFromGoStackTest {
   }
 
   @Test
-  public void checkWorkspaceCreationFromPythonStack() {
+  public void checkWorkspaceCreationFromGoStack() {
     String currentWindow;
 
     stackHelper.createWorkspaceWithProjectsFromStack(GO, WORKSPACE_NAME, projects);

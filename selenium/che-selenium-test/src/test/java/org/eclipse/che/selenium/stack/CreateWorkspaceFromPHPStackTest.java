@@ -58,7 +58,7 @@ public class CreateWorkspaceFromPHPStackTest {
   }
 
   @Test
-  public void checkWorkspaceCreationFromPythonStack() {
+  public void checkWorkspaceCreationFromPHPStack() {
     String currentWindow;
 
     stackHelper.createWorkspaceWithProjectFromStack(PHP, WORKSPACE_NAME, PROJECT_NAME);

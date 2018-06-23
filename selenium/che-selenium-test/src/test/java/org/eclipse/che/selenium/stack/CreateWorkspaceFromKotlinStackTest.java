@@ -41,7 +41,7 @@ public class CreateWorkspaceFromKotlinStackTest {
   }
 
   @Test
-  public void createWorkspaceFromBlankStackTest() {
+  public void createWorkspaceFromKotlinStack() {
     stackHelper.createWorkspaceWithoutProjectFromStack(KOTLIN, WORKSPACE_NAME);
 
     stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();

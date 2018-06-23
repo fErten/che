@@ -51,7 +51,7 @@ public class CreateWorkspaceFromRailsStackTest {
   }
 
   @Test
-  public void checkWorkspaceCreationFromPythonStack() {
+  public void checkWorkspaceCreationFromRailsStack() {
     String currentWindow;
 
     stackHelper.createWorkspaceWithProjectsFromStack(RAILS, WORKSPACE_NAME, projects);
