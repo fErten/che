@@ -15,7 +15,7 @@ import static org.eclipse.che.selenium.core.constant.TestBuildConstants.BUILD_SU
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.BUILD;
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.DEBUG;
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.RUN;
-import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.JAVA;
+import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.JAVA_CENTOS;
 
 import com.google.inject.Inject;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** @author Skoryk Serhii */
-public class CreateWorkspaceFromJavaStackTest {
+public class CreateWorkspaceFromJavaCentosStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
   private static final String CONSOLE_JAVA_SIMPLE = "console-java-simple";
   private static final String WEB_JAVA_SPRING = "web-java-spring";
@@ -53,10 +53,10 @@ public class CreateWorkspaceFromJavaStackTest {
   }
 
   @Test
-  public void checkWorkspaceCreationFromJavaStack() {
+  public void checkWorkspaceCreationFromJavaCentosStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(JAVA, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceWithProjectsFromStack(JAVA_CENTOS, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
