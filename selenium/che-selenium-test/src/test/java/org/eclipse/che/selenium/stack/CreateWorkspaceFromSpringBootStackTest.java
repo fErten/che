@@ -63,16 +63,6 @@ public class CreateWorkspaceFromSpringBootStackTest {
     stackHelper.waitProjectInitialization(SPRING_BOOT_HEALTH_CHECK_BOOSTER);
     stackHelper.waitProjectInitialization(SPRING_BOOT_HTTP_BOOSTER);
 
-    stackHelper.startCommandAndCheckResult(SPRING_BOOT_HTTP_BOOSTER, BUILD, "build", BUILD_SUCCESS);
-
-    stackHelper.startCommandAndCheckResult(
-        SPRING_BOOT_HTTP_BOOSTER, BUILD, "clean build", BUILD_SUCCESS);
-
-    stackHelper.startCommandAndCheckResult(
-        SPRING_BOOT_HTTP_BOOSTER, RUN, "run", "INFO: Setting the server's publish address to be");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h2[text()='HTTP Booster']");
-    stackHelper.closeProcessTabWithAskDialog("run");
-
     stackHelper.startCommandAndCheckResult(
         SPRING_BOOT_HEALTH_CHECK_BOOSTER, BUILD, "build", BUILD_SUCCESS);
 
@@ -86,6 +76,23 @@ public class CreateWorkspaceFromSpringBootStackTest {
 
     stackHelper.startCommandAndCheckResult(
         SPRING_BOOT_HEALTH_CHECK_BOOSTER,
+        DEBUG,
+        "debug",
+        "Listening for transport dt_socket at address: 5005");
+    stackHelper.closeProcessTabWithAskDialog("debug");
+
+    stackHelper.startCommandAndCheckResult(SPRING_BOOT_HTTP_BOOSTER, BUILD, "build", BUILD_SUCCESS);
+
+    stackHelper.startCommandAndCheckResult(
+        SPRING_BOOT_HTTP_BOOSTER, BUILD, "clean build", BUILD_SUCCESS);
+
+    stackHelper.startCommandAndCheckResult(
+        SPRING_BOOT_HTTP_BOOSTER, RUN, "run", "INFO: Setting the server's publish address to be");
+    stackHelper.startCommandAndCheckApp(currentWindow, "//h2[text()='HTTP Booster']");
+    stackHelper.closeProcessTabWithAskDialog("run");
+
+    stackHelper.startCommandAndCheckResult(
+        SPRING_BOOT_HTTP_BOOSTER,
         DEBUG,
         "debug",
         "Listening for transport dt_socket at address: 5005");

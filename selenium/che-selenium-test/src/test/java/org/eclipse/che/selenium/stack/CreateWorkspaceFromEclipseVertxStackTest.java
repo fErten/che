@@ -80,5 +80,10 @@ public class CreateWorkspaceFromEclipseVertxStackTest {
     stackHelper.startCommandAndCheckResult(
         VERTX_HTTP_BOOSTER, RUN, "run", "[INFO] INFO: Succeeded in deploying verticle");
     stackHelper.startCommandAndCheckApp(currentWindow, "//h2[@id='_vert_x_health_check_booster']");
+    stackHelper.startCommandAndCheckResult(
+        VERTX_HTTP_BOOSTER,
+        DEBUG,
+        "debug",
+        "[INFO] Listening for transport dt_socket at address: 5005");
   }
 }
