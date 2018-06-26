@@ -19,7 +19,6 @@ import static org.openqa.selenium.Keys.ENTER;
 import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
-import org.eclipse.che.selenium.core.utils.WaitUtils;
 import org.eclipse.che.selenium.pageobject.CheTerminal;
 import org.eclipse.che.selenium.pageobject.CodenvyEditor;
 import org.eclipse.che.selenium.pageobject.Consoles;
@@ -83,7 +82,6 @@ public class CreateWorkspaceFromPHPStackTest {
     // start 'stop apache' command and check that apache not running
     stackHelper.startCommandAndCheckResult(
         PROJECT_NAME, RUN, "stop apache", "Stopping Apache httpd web server apache2");
-    WaitUtils.sleepQuietly(3);
     consoles.selectProcessByTabName("Terminal");
     terminal.typeIntoTerminal("ps ax | grep 'service apache2 start'");
     terminal.typeIntoTerminal(ENTER.toString());

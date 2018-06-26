@@ -16,11 +16,15 @@ import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextM
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.DEBUG;
 import static org.eclipse.che.selenium.core.constant.TestProjectExplorerContextMenuConstants.ContextMenuCommandGoals.RUN;
 import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.JAVA_CENTOS;
+import static org.openqa.selenium.Keys.ENTER;
 
 import com.google.inject.Inject;
 import java.util.ArrayList;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.CheTerminal;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -37,6 +41,9 @@ public class CreateWorkspaceFromJavaCentosStackTest {
   @Inject private Dashboard dashboard;
   @Inject private StackHelper stackHelper;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private Consoles consoles;
+  @Inject private CheTerminal terminal;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -80,6 +87,14 @@ public class CreateWorkspaceFromJavaCentosStackTest {
     stackHelper.startCommandAndCheckResult(
         WEB_JAVA_SPRING, RUN, "web-java-spring:run tomcat", "Server startup in");
     stackHelper.startCommandAndCheckApp(currentWindow, "//span[text()='Enter your name: ']");
+
+    // start 'stop apache' command and check that apache not running
+    projectExplorer.invokeCommandWithContextMenu(
+        RUN, WEB_JAVA_SPRING, "web-java-spring:stop tomcat");
+    consoles.selectProcessByTabName("Terminal");
+    terminal.typeIntoTerminal("ps ax");
+    terminal.typeIntoTerminal(ENTER.toString());
+    terminal.waitExpectedTextNotPresentTerminal("/bin/bash -c $TOMCAT_HOME/bin/catalina.sh");
 
     stackHelper.startCommandAndCheckResult(
         WEB_JAVA_SPRING,

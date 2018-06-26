@@ -1,0 +1,51 @@
+<!--
+
+    Copyright (c) 2012-2018 Red Hat, Inc.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License v1.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-v10.html
+
+    Contributors:
+      Red Hat, Inc. - initial API and implementation
+
+-->
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="One-thread Eclipse Che selenium tests"
+  verbose="10"
+  parallel="classes"
+  thread-count="1">
+
+  <test name="all">
+    <method-selectors>
+      <method-selector>
+      </method-selector>
+    </method-selectors>
+    <classes>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromBlankStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromPythonStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromEclipseCheStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromJavaCentosStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromJavaStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromAndroidStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCentosBlankStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCentosGoStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCentosNodeStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCentosWildFlySwarmStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCeylonStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCppStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromEclipseVertxStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromGoStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromJavaTheiaDockerStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromJavaTheiaOpenshiftStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromKotlinStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromNETStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromNodeStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromPHPStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromRailsStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromSpringBootStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.WorkingWithJavaMySqlStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.WorkingWithNodeWsTest"/>
+    </classes>
+  </test>
+</suite>
