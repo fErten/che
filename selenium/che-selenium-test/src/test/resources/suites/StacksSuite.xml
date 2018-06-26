@@ -27,12 +27,13 @@
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromEclipseCheStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromJavaCentosStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromJavaStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromJavaMySqlCentosStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromAndroidStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCentosBlankStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCentosGoStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCentosNodeStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCentosWildFlySwarmStackTest"/>
-      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCeylonStackTest"/>
+      <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCeylonWithJavaStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromCppStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromEclipseVertxStackTest"/>
       <class name="org.eclipse.che.selenium.stack.CreateWorkspaceFromGoStackTest"/>

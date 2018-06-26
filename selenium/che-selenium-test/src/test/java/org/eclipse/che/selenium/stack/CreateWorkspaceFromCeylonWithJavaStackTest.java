@@ -26,7 +26,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /** @author Skoryk Serhii */
-public class CreateWorkspaceFromCeylonStackTest {
+public class CreateWorkspaceFromCeylonWithJavaStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
   private static final String PROJECT_NAME = "ceylon-hello-world";
   private static final String MODULE_COMPILED_MESSAGE =
