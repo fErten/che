@@ -58,8 +58,12 @@ public class Ide {
   }
 
   public void waitOpenedWorkspaceIsReadyToUse() {
-    projectExplorer.waitProjectExplorer(PREPARING_WS_TIMEOUT_SEC);
-    terminal.waitTerminalTab(PREPARING_WS_TIMEOUT_SEC);
+    waitOpenedWorkspaceIsReadyToUse(PREPARING_WS_TIMEOUT_SEC);
+  }
+
+  public void waitOpenedWorkspaceIsReadyToUse(int timeout) {
+    projectExplorer.waitProjectExplorer(timeout);
+    terminal.waitTerminalTab(timeout);
     menu.waitMenuItemIsEnabled(PROFILE_MENU);
   }
 

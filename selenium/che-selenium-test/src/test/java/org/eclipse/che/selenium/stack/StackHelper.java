@@ -12,6 +12,7 @@
 package org.eclipse.che.selenium.stack;
 
 import static java.lang.String.format;
+import static org.eclipse.che.selenium.core.constant.TestTimeoutsConstants.APPLICATION_START_TIMEOUT_SEC;
 import static org.eclipse.che.selenium.core.constant.TestTimeoutsConstants.ELEMENT_TIMEOUT_SEC;
 import static org.eclipse.che.selenium.core.constant.TestTimeoutsConstants.PREPARING_WS_TIMEOUT_SEC;
 import static org.eclipse.che.selenium.pageobject.ProjectExplorer.FolderTypes.PROJECT_FOLDER;
@@ -109,7 +110,7 @@ public class StackHelper {
   public String switchToIdeAndWaitWorkspaceIsReadyToUse() {
     String currentWindow = seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
     toastLoader.waitToastLoaderAndClickStartButton();
-    ide.waitOpenedWorkspaceIsReadyToUse();
+    ide.waitOpenedWorkspaceIsReadyToUse(APPLICATION_START_TIMEOUT_SEC);
 
     return currentWindow;
   }
