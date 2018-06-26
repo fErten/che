@@ -26,7 +26,6 @@ import org.eclipse.che.selenium.pageobject.AskDialog;
 import org.eclipse.che.selenium.pageobject.CodenvyEditor;
 import org.eclipse.che.selenium.pageobject.Consoles;
 import org.eclipse.che.selenium.pageobject.Ide;
-import org.eclipse.che.selenium.pageobject.MavenPluginStatusBar;
 import org.eclipse.che.selenium.pageobject.NotificationsPopupPanel;
 import org.eclipse.che.selenium.pageobject.ProjectExplorer;
 import org.eclipse.che.selenium.pageobject.ToastLoader;
@@ -50,9 +49,76 @@ public class StackHelper {
   @Inject private ProjectExplorer projectExplorer;
   @Inject private SeleniumWebDriver seleniumWebDriver;
   @Inject private ProjectSourcePage projectSourcePage;
-  @Inject private MavenPluginStatusBar mavenPluginStatusBar;
   @Inject private NotificationsPopupPanel notificationsPopupPanel;
   @Inject private SeleniumWebDriverHelper seleniumWebDriverHelper;
+
+  public void createWorkspaceFromStackWithProject(
+      NewWorkspace.Stack stack, String workspaceName, String projectName) {
+    dashboard.waitDashboardToolbarTitle();
+    dashboard.selectWorkspacesItemOnDashboard();
+    workspaces.clickOnAddWorkspaceBtn();
+
+    newWorkspace.waitToolbar();
+    newWorkspace.clickOnAllStacksTab();
+    newWorkspace.selectStack(stack);
+    newWorkspace.typeWorkspaceName(workspaceName);
+    projectSourcePage.clickOnAddOrImportProjectButton();
+    projectSourcePage.selectSample(projectName);
+    projectSourcePage.clickOnAddProjectButton();
+
+    newWorkspace.clickOnCreateButtonAndOpenInIDE();
+  }
+
+  public void createWorkspaceFromStackWithoutProject(
+      NewWorkspace.Stack stack, String workspaceName) {
+    dashboard.waitDashboardToolbarTitle();
+    dashboard.selectWorkspacesItemOnDashboard();
+    workspaces.clickOnAddWorkspaceBtn();
+
+    newWorkspace.waitToolbar();
+    newWorkspace.clickOnAllStacksTab();
+    newWorkspace.selectStack(stack);
+    newWorkspace.typeWorkspaceName(workspaceName);
+
+    newWorkspace.clickOnCreateButtonAndOpenInIDE();
+  }
+
+  public void createWorkspaceFromStackWithProjects(
+      NewWorkspace.Stack stack, String workspaceName, ArrayList<String> projectNames) {
+    dashboard.waitDashboardToolbarTitle();
+    dashboard.selectWorkspacesItemOnDashboard();
+    workspaces.clickOnAddWorkspaceBtn();
+
+    newWorkspace.waitToolbar();
+    newWorkspace.clickOnAllStacksTab();
+    newWorkspace.selectStack(stack);
+    newWorkspace.typeWorkspaceName(workspaceName);
+    projectSourcePage.clickOnAddOrImportProjectButton();
+
+    projectNames.forEach(
+        project -> {
+          projectSourcePage.selectSample(project);
+        });
+
+    projectSourcePage.clickOnAddProjectButton();
+    newWorkspace.clickOnCreateButtonAndOpenInIDE();
+  }
+
+  // Switch from Dashboard to IDE and check that workspace is ready to use
+  public String switchToIdeAndWaitWorkspaceIsReadyToUse() {
+    String currentWindow = seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
+    toastLoader.waitToastLoaderAndClickStartButton();
+    ide.waitOpenedWorkspaceIsReadyToUse(APPLICATION_START_TIMEOUT_SEC);
+
+    return currentWindow;
+  }
+
+  // Wait for project has PROJECT_FOLDER status
+  public void waitProjectInitialization(String projectName) {
+    projectExplorer.waitItem(projectName);
+    notificationsPopupPanel.waitPopupPanelsAreClosed();
+    projectExplorer.waitDefinedTypeOfFolder(projectName, PROJECT_FOLDER);
+  }
 
   // Start command from project context menu and check expected message in Terminal
   public void startCommandAndCheckResult(
@@ -94,86 +160,6 @@ public class StackHelper {
     seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
   }
 
-  // Open file and check LS initialization message in "dev-machine" process
-  public void checkLanguageServerInitialization(
-      String projectName, String fileName, String textInTerminal) {
-    consoles.selectProcessByTabName("dev-machine");
-    projectExplorer.waitAndSelectItem(projectName);
-    projectExplorer.openItemByPath(projectName);
-    projectExplorer.openItemByPath(projectName + "/" + fileName);
-    editor.waitTabIsPresent(fileName);
-
-    consoles.waitExpectedTextIntoConsole(textInTerminal, ELEMENT_TIMEOUT_SEC);
-  }
-
-  // Switch from Dashboard to IDE and check that workspace is ready to use
-  public String switchToIdeAndWaitWorkspaceIsReadyToUse() {
-    String currentWindow = seleniumWebDriverHelper.switchToIdeFrameAndWaitAvailability();
-    toastLoader.waitToastLoaderAndClickStartButton();
-    ide.waitOpenedWorkspaceIsReadyToUse(APPLICATION_START_TIMEOUT_SEC);
-
-    return currentWindow;
-  }
-
-  // Wait for project has PROJECT_FOLDER status
-  public void waitProjectInitialization(String projectName) {
-    projectExplorer.waitItem(projectName);
-    notificationsPopupPanel.waitPopupPanelsAreClosed();
-    projectExplorer.waitDefinedTypeOfFolder(projectName, PROJECT_FOLDER);
-  }
-
-  public void createWorkspaceWithProjectFromStack(
-      NewWorkspace.Stack stack, String workspaceName, String projectName) {
-    dashboard.waitDashboardToolbarTitle();
-    dashboard.selectWorkspacesItemOnDashboard();
-    workspaces.clickOnAddWorkspaceBtn();
-
-    newWorkspace.waitToolbar();
-    newWorkspace.clickOnAllStacksTab();
-    newWorkspace.selectStack(stack);
-    newWorkspace.typeWorkspaceName(workspaceName);
-    projectSourcePage.clickOnAddOrImportProjectButton();
-    projectSourcePage.selectSample(projectName);
-    projectSourcePage.clickOnAddProjectButton();
-
-    newWorkspace.clickOnCreateButtonAndOpenInIDE();
-  }
-
-  public void createWorkspaceWithoutProjectFromStack(
-      NewWorkspace.Stack stack, String workspaceName) {
-    dashboard.waitDashboardToolbarTitle();
-    dashboard.selectWorkspacesItemOnDashboard();
-    workspaces.clickOnAddWorkspaceBtn();
-
-    newWorkspace.waitToolbar();
-    newWorkspace.clickOnAllStacksTab();
-    newWorkspace.selectStack(stack);
-    newWorkspace.typeWorkspaceName(workspaceName);
-
-    newWorkspace.clickOnCreateButtonAndOpenInIDE();
-  }
-
-  public void createWorkspaceWithProjectsFromStack(
-      NewWorkspace.Stack stack, String workspaceName, ArrayList<String> projectNames) {
-    dashboard.waitDashboardToolbarTitle();
-    dashboard.selectWorkspacesItemOnDashboard();
-    workspaces.clickOnAddWorkspaceBtn();
-
-    newWorkspace.waitToolbar();
-    newWorkspace.clickOnAllStacksTab();
-    newWorkspace.selectStack(stack);
-    newWorkspace.typeWorkspaceName(workspaceName);
-    projectSourcePage.clickOnAddOrImportProjectButton();
-
-    projectNames.forEach(
-        project -> {
-          projectSourcePage.selectSample(project);
-        });
-
-    projectSourcePage.clickOnAddProjectButton();
-    newWorkspace.clickOnCreateButtonAndOpenInIDE();
-  }
-
   public void closeProcessTabWithAskDialog(String tabName) {
     String message =
         format(
@@ -183,5 +169,17 @@ public class StackHelper {
     consoles.closeProcessByTabName(tabName);
     askDialog.acceptDialogWithText(message);
     consoles.waitProcessIsNotPresentInProcessConsoleTree(tabName);
+  }
+  // Open file and check LS initialization message in "dev-machine" process
+
+  public void checkLanguageServerInitialization(
+      String projectName, String fileName, String textInTerminal) {
+    consoles.selectProcessByTabName("dev-machine");
+    projectExplorer.waitAndSelectItem(projectName);
+    projectExplorer.openItemByPath(projectName);
+    projectExplorer.openItemByPath(projectName + "/" + fileName);
+    editor.waitTabIsPresent(fileName);
+
+    consoles.waitExpectedTextIntoConsole(textInTerminal, ELEMENT_TIMEOUT_SEC);
   }
 }

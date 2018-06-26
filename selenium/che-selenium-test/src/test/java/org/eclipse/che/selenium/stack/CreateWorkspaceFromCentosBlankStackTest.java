@@ -47,7 +47,7 @@ public class CreateWorkspaceFromCentosBlankStackTest {
 
   @Test
   public void createWorkspaceFromCentosBlankStack() {
-    stackHelper.createWorkspaceWithProjectFromStack(CENTOS_BLANK, WORKSPACE_NAME, PROJECT_NAME);
+    stackHelper.createWorkspaceFromStackWithProject(CENTOS_BLANK, WORKSPACE_NAME, PROJECT_NAME);
 
     stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

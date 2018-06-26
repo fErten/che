@@ -46,7 +46,7 @@ public class CreateWorkspaceFromJavaTheiaDockerStackTest {
 
   @Test
   public void createWorkspaceFromJavaTheiaDockerStack() {
-    stackHelper.createWorkspaceWithoutProjectFromStack(JAVA_THEIA_DOCKER, WORKSPACE_NAME);
+    stackHelper.createWorkspaceFromStackWithoutProject(JAVA_THEIA_DOCKER, WORKSPACE_NAME);
 
     seleniumWebDriverHelper.waitAndSwitchToFrame(
         By.id("ide-application-iframe"), PREPARING_WS_TIMEOUT_SEC);

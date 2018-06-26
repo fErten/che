@@ -51,7 +51,7 @@ public class CreateWorkspaceFromCppStackTest {
 
   @Test
   public void checkWorkspaceCreationFromCppStack() {
-    stackHelper.createWorkspaceWithProjectsFromStack(CPP, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(CPP, WORKSPACE_NAME, projects);
 
     stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

@@ -47,7 +47,7 @@ public class CreateWorkspaceFromBlankStackTest {
 
   @Test
   public void createWorkspaceFromBlankStack() {
-    stackHelper.createWorkspaceWithProjectFromStack(BLANK, WORKSPACE_NAME, PROJECT_NAME);
+    stackHelper.createWorkspaceFromStackWithProject(BLANK, WORKSPACE_NAME, PROJECT_NAME);
 
     stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

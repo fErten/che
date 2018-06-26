@@ -48,7 +48,7 @@ public class CreateWorkspaceFromJavaTheiaOpenshiftStackTest {
 
   @Test
   public void createWorkspaceFromJavaTheiaOpenshiftStack() {
-    stackHelper.createWorkspaceWithoutProjectFromStack(JAVA_THEIA_OPENSHIFT, WORKSPACE_NAME);
+    stackHelper.createWorkspaceFromStackWithoutProject(JAVA_THEIA_OPENSHIFT, WORKSPACE_NAME);
 
     seleniumWebDriverHelper.waitAndSwitchToFrame(
         By.id("ide-application-iframe"), PREPARING_WS_TIMEOUT_SEC);

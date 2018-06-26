@@ -62,7 +62,7 @@ public class CreateWorkspaceFromEclipseCheStackTest {
   public void checkWorkspaceCreationFromEclipseCheStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(ECLIPSE_CHE, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(ECLIPSE_CHE, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

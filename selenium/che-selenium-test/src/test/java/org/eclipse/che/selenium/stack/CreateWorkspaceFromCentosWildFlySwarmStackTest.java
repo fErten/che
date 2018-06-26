@@ -48,7 +48,7 @@ public class CreateWorkspaceFromCentosWildFlySwarmStackTest {
   public void createWorkspaceFromCentosWildFlySwarmStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectFromStack(
+    stackHelper.createWorkspaceFromStackWithProject(
         CENTOS_WILDFLY_SWARM, WORKSPACE_NAME, PROJECT_NAME);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();

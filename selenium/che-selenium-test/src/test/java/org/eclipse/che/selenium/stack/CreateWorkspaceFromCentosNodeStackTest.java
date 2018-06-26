@@ -55,7 +55,7 @@ public class CreateWorkspaceFromCentosNodeStackTest {
 
   @Test
   public void checkWorkspaceCreationFromCentosNodeStack() {
-    stackHelper.createWorkspaceWithProjectsFromStack(CENTOS_NODEJS, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(CENTOS_NODEJS, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

@@ -54,7 +54,7 @@ public class CreateWorkspaceFromRailsStackTest {
   public void checkWorkspaceCreationFromRailsStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(RAILS, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(RAILS, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

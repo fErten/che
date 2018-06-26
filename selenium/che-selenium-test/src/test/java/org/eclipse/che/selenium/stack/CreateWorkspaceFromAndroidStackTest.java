@@ -53,7 +53,7 @@ public class CreateWorkspaceFromAndroidStackTest {
 
   @Test
   public void checkWorkspaceCreationFromAndroidStack() {
-    stackHelper.createWorkspaceWithProjectsFromStack(ANDROID, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(ANDROID, WORKSPACE_NAME, projects);
 
     stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

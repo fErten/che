@@ -56,7 +56,7 @@ public class CreateWorkspaceFromSpringBootStackTest {
   public void checkWorkspaceCreationFromSpringBootStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(SPRING_BOOT, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(SPRING_BOOT, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

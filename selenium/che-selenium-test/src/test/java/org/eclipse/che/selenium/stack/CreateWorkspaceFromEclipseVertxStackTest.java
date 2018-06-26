@@ -56,7 +56,7 @@ public class CreateWorkspaceFromEclipseVertxStackTest {
   public void checkWorkspaceCreationFromEclipseVertxStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(ECLIPSE_VERTX, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(ECLIPSE_VERTX, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

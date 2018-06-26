@@ -52,7 +52,7 @@ public class CreateWorkspaceFromPythonStackTest {
 
   @Test
   public void checkWorkspaceCreationFromPythonStack() {
-    stackHelper.createWorkspaceWithProjectFromStack(PYTHON, WORKSPACE_NAME, PROJECT_NAME);
+    stackHelper.createWorkspaceFromStackWithProject(PYTHON, WORKSPACE_NAME, PROJECT_NAME);
 
     stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

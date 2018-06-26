@@ -63,7 +63,7 @@ public class CreateWorkspaceFromJavaCentosStackTest {
   public void checkWorkspaceCreationFromJavaCentosStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(JAVA_CENTOS, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(JAVA_CENTOS, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

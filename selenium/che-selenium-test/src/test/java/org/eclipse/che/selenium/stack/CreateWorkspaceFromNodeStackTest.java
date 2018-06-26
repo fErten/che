@@ -55,7 +55,7 @@ public class CreateWorkspaceFromNodeStackTest {
 
   @Test
   public void checkWorkspaceCreationFromNodeStack() {
-    stackHelper.createWorkspaceWithProjectsFromStack(NODE, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(NODE, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

@@ -57,7 +57,7 @@ public class CreateWorkspaceFromJavaMySqlCentosStackTest {
   public void checkWorkspaceCreationFromJavaStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectFromStack(
+    stackHelper.createWorkspaceFromStackWithProject(
         JAVA_MYSQL_CENTOS, WORKSPACE_NAME, WEB_JAVA_PETCLINIC);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();

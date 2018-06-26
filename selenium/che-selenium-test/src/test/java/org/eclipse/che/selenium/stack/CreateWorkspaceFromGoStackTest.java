@@ -53,7 +53,7 @@ public class CreateWorkspaceFromGoStackTest {
   public void checkWorkspaceCreationFromGoStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(GO, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(GO, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

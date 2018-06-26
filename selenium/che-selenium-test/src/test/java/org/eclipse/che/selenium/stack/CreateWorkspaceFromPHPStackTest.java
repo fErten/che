@@ -63,7 +63,7 @@ public class CreateWorkspaceFromPHPStackTest {
 
   @Test
   public void checkWorkspaceCreationFromPHPStack() {
-    stackHelper.createWorkspaceWithProjectsFromStack(PHP, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(PHP, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

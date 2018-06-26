@@ -63,7 +63,7 @@ public class CreateWorkspaceFromJavaStackTest {
   public void checkWorkspaceCreationFromJavaStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectsFromStack(JAVA, WORKSPACE_NAME, projects);
+    stackHelper.createWorkspaceFromStackWithProjects(JAVA, WORKSPACE_NAME, projects);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 

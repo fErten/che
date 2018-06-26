@@ -53,7 +53,7 @@ public class CreateWorkspaceFromNETStackTest {
   public void checkWorkspaceCreationFromNETStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceWithProjectFromStack(DOT_NET, WORKSPACE_NAME, PROJECT_NAME);
+    stackHelper.createWorkspaceFromStackWithProject(DOT_NET, WORKSPACE_NAME, PROJECT_NAME);
 
     currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
