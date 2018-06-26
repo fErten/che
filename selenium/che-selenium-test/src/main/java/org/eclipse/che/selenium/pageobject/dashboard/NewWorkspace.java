@@ -148,15 +148,13 @@ public class NewWorkspace {
     ECLIPSE_CHE("che-in-che"),
     ECLIPSE_VERTX("vert.x"),
     GO("go-default"),
-    HADOOP("hadoop-default"),
     JAVA_CENTOS("java-centos"),
-    JAVA_DEBIAN("java-debian"),
     JAVA_THEIA_DOCKER("java-theia-docker"),
     JAVA_THEIA_OPENSHIFT("java-theia-openshift"),
     JAVA_MYSQL_CENTOS("java-centos-mysql"),
+    JAVA_DEBIAN("java-debian"),
     KOTLIN("kotlin-default"),
     NODE("node-default"),
-    OPENSHIFT_DEFAULT("openshift-default"),
     OPENSHIFT_SQL("openshift-sql"),
     PHP("php-default"),
     PHP_GAE("php-gae"),
@@ -166,9 +164,11 @@ public class NewWorkspace {
     PYTHON_2_7("python-2.7"),
     PYTHON_GAE("python-gae"),
     RAILS("rails-default"),
+    OPENSHIFT("openshift-default"),
+    HADOOP("hadoop-default"),
     SELENIUM("selenium"),
     SPRING_BOOT("spring-boot"),
-    TOMEE("tomee-default"),
+    TOM_EE("tomee-default"),
     UBUNTU("ubuntu"),
     ZEND("zend");
 
@@ -493,7 +493,7 @@ public class NewWorkspace {
   }
 
   public void selectStack(Stack stack) {
-    waitStacks(asList(stack.getId()));
+    waitStacks(asList(stack));
     seleniumWebDriverHelper.waitAndClick(By.xpath(format(STACK_ROW_XPATH, stack.getId())));
   }
 
@@ -721,11 +721,11 @@ public class NewWorkspace {
                 driver -> getVisibleStacks().equals(expectedVisibleStacks));
   }
 
-  public void waitStacks(List<String> expectedStacks) {
+  public void waitStacks(List<Stack> expectedStacks) {
     expectedStacks.forEach(
-        stackId ->
+        stack ->
             seleniumWebDriverHelper.waitPresence(
-                By.xpath(format("//div[@data-stack-id='%s']", stackId))));
+                By.xpath(format("//div[@data-stack-id='%s']", stack.getId()))));
   }
 
   public void waitStacksCount(int expectedCount) {
