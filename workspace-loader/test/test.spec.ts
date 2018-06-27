@@ -106,18 +106,27 @@ describe('Workspace Loader', () => {
         beforeEach((done) => {
             let loader = new Loader();
             workspaceLoader = new WorkspaceLoader(loader);
-    
+
             spyOn(workspaceLoader, 'getWorkspaceKey').and.returnValue("foo/bar");
             spyOn(workspaceLoader, 'getQueryString').and.returnValue("");
-    
+
             spyOn(workspaceLoader, 'getWorkspace').and.callFake(() => {
                 return new Promise((resolve) => {
+                    fakeWorkspaceConfig.status = 'STOPPED';
                     fakeWorkspaceConfig.config.environments["default"].machines = {};
                     resolve(fakeWorkspaceConfig);
                 });
             });
-    
-            spyOn(workspaceLoader, "handleWorkspace");
+
+            spyOn(workspaceLoader, "subscribeWorkspaceEvents").and.callFake(() => {
+                return new Promise((resolve) => {
+                    resolve();
+                });
+            });
+
+            spyOn(workspaceLoader, "startWorkspace").and.callFake(() => {
+                done();
+            });
 
             spyOn(workspaceLoader, "openURL").and.callFake(() => {
                 done();
@@ -126,6 +135,33 @@ describe('Workspace Loader', () => {
             workspaceLoader.load();
         });
 
+        it('openIDE must not be called if status is STOPPED', () => {
+            expect(workspaceLoader.openIDE).not.toHaveBeenCalled();
+        });
+
+        it('must subscribe to events', () => {
+            expect(workspaceLoader.subscribeWorkspaceEvents).toHaveBeenCalled();
+        });
+
+        it('must start the workspace', () => {
+            expect(workspaceLoader.startWorkspace).toHaveBeenCalled();
+        });
+
+        it('openIDE must be called when workspace become RUNNING', () => {
+            workspaceLoader.onWorkspaceStatusChanged("RUNNING");
+            expect(workspaceLoader.openURL).toHaveBeenCalledWith("test url");
+        });
+
+
+
+
+
+
+
+
+
+
+/*
         it('basic workspace function must be called', () => {
             expect(workspaceLoader.getWorkspaceKey).toHaveBeenCalled();
             expect(workspaceLoader.getWorkspace).toHaveBeenCalledWith("foo/bar");
@@ -136,8 +172,8 @@ describe('Workspace Loader', () => {
         });
 
         it('must open IDE with `test url`', () => {
-            expect(workspaceLoader.openURL).toHaveBeenCalledWith("test url");
-        });
+
+        });*/
     });
 
     describe('must open default IDE with query parameters when workspace does not have IDE server', () => {
