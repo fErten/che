@@ -18,6 +18,10 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -31,9 +35,12 @@ public class CreateWorkspaceFromGoStackTest {
 
   private ArrayList<String> projects = new ArrayList<>();
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -53,25 +60,25 @@ public class CreateWorkspaceFromGoStackTest {
   public void checkWorkspaceCreationFromGoStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceFromStackWithProjects(GO, WORKSPACE_NAME, projects);
+    createWorkspaceHelper.createWorkspaceFromStackWithProjects(GO, WORKSPACE_NAME, projects);
 
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    currentWindow = ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(DESKTOP_GO_SIMPLE_PROJECT);
-    stackHelper.waitProjectInitialization(WEB_GO_SIMPLE_PROJECT);
+    projectExplorer.waitProjectInitialization(DESKTOP_GO_SIMPLE_PROJECT);
+    projectExplorer.waitProjectInitialization(WEB_GO_SIMPLE_PROJECT);
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         DESKTOP_GO_SIMPLE_PROJECT,
         RUN,
         "desktop-go-simple:run",
         "Hello, world. Sqrt(2) = 1.4142135623730951");
 
-    stackHelper.startCommandAndCheckResult(WEB_GO_SIMPLE_PROJECT, RUN, "run", "listening on");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//pre[contains(text(),'Hello there')]");
-    stackHelper.closeProcessTabWithAskDialog("run");
+    consoles.startCommandAndCheckResult(WEB_GO_SIMPLE_PROJECT, RUN, "run", "listening on");
+    consoles.startCommandAndCheckApp(currentWindow, "//pre[contains(text(),'Hello there')]");
+    consoles.closeProcessTabWithAskDialog("run");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_GO_SIMPLE_PROJECT, RUN, "web-go-simple:run", "listening on");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//pre[contains(text(),'Hello there')]");
+    consoles.startCommandAndCheckApp(currentWindow, "//pre[contains(text(),'Hello there')]");
   }
 }

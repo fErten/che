@@ -143,7 +143,7 @@ public class WorkingWithJavaMySqlStackTest {
     consoles.waitTabNameProcessIsNotPresent(BUILD_AND_DEPLOY_PROCESS);
 
     // Check that tomcat is not running
-    consoles.selectProcessByTabName("Terminal");
+    consoles.selectProcessInProcessConsoleTreeByName("Terminal");
     loader.waitOnClosed();
     terminal.typeIntoTerminal("ps ax | grep tomcat8");
     terminal.typeIntoTerminal(ENTER.toString());

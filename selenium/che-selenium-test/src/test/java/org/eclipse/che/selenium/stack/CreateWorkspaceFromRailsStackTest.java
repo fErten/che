@@ -19,6 +19,10 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -32,9 +36,12 @@ public class CreateWorkspaceFromRailsStackTest {
 
   private ArrayList<String> projects = new ArrayList<>();
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -54,30 +61,30 @@ public class CreateWorkspaceFromRailsStackTest {
   public void checkWorkspaceCreationFromRailsStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceFromStackWithProjects(RAILS, WORKSPACE_NAME, projects);
+    createWorkspaceHelper.createWorkspaceFromStackWithProjects(RAILS, WORKSPACE_NAME, projects);
 
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    currentWindow = ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(CONSOLE_RUBY_SIMPLE_PROJECT);
-    stackHelper.waitProjectInitialization(WEB_RAILS_SIMPLE_PROJECT);
+    projectExplorer.waitProjectInitialization(CONSOLE_RUBY_SIMPLE_PROJECT);
+    projectExplorer.waitProjectInitialization(WEB_RAILS_SIMPLE_PROJECT);
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         CONSOLE_RUBY_SIMPLE_PROJECT, RUN, "console-ruby-simple:run", "Hello world!");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_RAILS_SIMPLE_PROJECT, BUILD, "install dependencies", "Bundle complete!");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_RAILS_SIMPLE_PROJECT,
         BUILD,
         "web-rails-simple:install dependencies",
         "Bundle complete!");
 
-    stackHelper.startCommandAndCheckResult(WEB_RAILS_SIMPLE_PROJECT, RUN, "run", "* Listening on");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h1[text()='Yay! You’re on Rails!']");
-    stackHelper.closeProcessTabWithAskDialog("run");
+    consoles.startCommandAndCheckResult(WEB_RAILS_SIMPLE_PROJECT, RUN, "run", "* Listening on");
+    consoles.startCommandAndCheckApp(currentWindow, "//h1[text()='Yay! You’re on Rails!']");
+    consoles.closeProcessTabWithAskDialog("run");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_RAILS_SIMPLE_PROJECT, RUN, "web-rails-simple:run", "* Listening on");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h1[text()='Yay! You’re on Rails!']");
+    consoles.startCommandAndCheckApp(currentWindow, "//h1[text()='Yay! You’re on Rails!']");
   }
 }

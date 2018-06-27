@@ -21,6 +21,10 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -34,9 +38,12 @@ public class CreateWorkspaceFromEclipseVertxStackTest {
 
   private ArrayList<String> projects = new ArrayList<>();
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -56,31 +63,31 @@ public class CreateWorkspaceFromEclipseVertxStackTest {
   public void checkWorkspaceCreationFromEclipseVertxStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceFromStackWithProjects(ECLIPSE_VERTX, WORKSPACE_NAME, projects);
+    createWorkspaceHelper.createWorkspaceFromStackWithProjects(
+        ECLIPSE_VERTX, WORKSPACE_NAME, projects);
 
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    currentWindow = ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(VERTX_HEALTH_CHECKS_BOOSTER);
-    stackHelper.waitProjectInitialization(VERTX_HTTP_BOOSTER);
+    projectExplorer.waitProjectInitialization(VERTX_HEALTH_CHECKS_BOOSTER);
+    projectExplorer.waitProjectInitialization(VERTX_HTTP_BOOSTER);
 
-    stackHelper.startCommandAndCheckResult(
-        VERTX_HEALTH_CHECKS_BOOSTER, BUILD, "build", BUILD_SUCCESS);
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(VERTX_HEALTH_CHECKS_BOOSTER, BUILD, "build", BUILD_SUCCESS);
+    consoles.startCommandAndCheckResult(
         VERTX_HEALTH_CHECKS_BOOSTER, RUN, "run", "[INFO] INFO: Succeeded in deploying verticle");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h2[@id='_vert_x_health_check_booster']");
-    stackHelper.closeProcessTabWithAskDialog("run");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckApp(currentWindow, "//h2[@id='_vert_x_health_check_booster']");
+    consoles.closeProcessTabWithAskDialog("run");
+    consoles.startCommandAndCheckResult(
         VERTX_HEALTH_CHECKS_BOOSTER,
         DEBUG,
         "debug",
         "[INFO] Listening for transport dt_socket at address: 5005");
-    stackHelper.closeProcessTabWithAskDialog("debug");
+    consoles.closeProcessTabWithAskDialog("debug");
 
-    stackHelper.startCommandAndCheckResult(VERTX_HTTP_BOOSTER, BUILD, "build", BUILD_SUCCESS);
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(VERTX_HTTP_BOOSTER, BUILD, "build", BUILD_SUCCESS);
+    consoles.startCommandAndCheckResult(
         VERTX_HTTP_BOOSTER, RUN, "run", "[INFO] INFO: Succeeded in deploying verticle");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h2[@id='_vert_x_health_check_booster']");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckApp(currentWindow, "//h2[@id='_vert_x_health_check_booster']");
+    consoles.startCommandAndCheckResult(
         VERTX_HTTP_BOOSTER,
         DEBUG,
         "debug",

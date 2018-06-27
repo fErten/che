@@ -22,6 +22,9 @@ import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
 import org.eclipse.che.selenium.pageobject.CheTerminal;
 import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -41,10 +44,12 @@ public class CreateWorkspaceFromPHPStackTest {
   private ArrayList<String> projects = new ArrayList<>();
   String currentWindow;
 
-  @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
-  @Inject private DefaultTestUser defaultTestUser;
+  @Inject private Ide ide;
   @Inject private Consoles consoles;
+  @Inject private Dashboard dashboard;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
+  @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private CheTerminal terminal;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
@@ -63,32 +68,33 @@ public class CreateWorkspaceFromPHPStackTest {
 
   @Test
   public void checkWorkspaceCreationFromPHPStack() {
-    stackHelper.createWorkspaceFromStackWithProjects(PHP, WORKSPACE_NAME, projects);
+    createWorkspaceHelper.createWorkspaceFromStackWithProjects(PHP, WORKSPACE_NAME, projects);
 
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    currentWindow = ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(WEB_PHP_SIMPLE);
-    stackHelper.waitProjectInitialization(WEB_PHP_GAE_SIMPLE);
+    projectExplorer.waitProjectInitialization(WEB_PHP_SIMPLE);
+    projectExplorer.waitProjectInitialization(WEB_PHP_GAE_SIMPLE);
   }
 
   @Test(priority = 1)
   public void checkWebPhpSimpleCommands() {
     // open 'index.php' file and check Python language server initialization
-    stackHelper.checkLanguageServerInitialization(WEB_PHP_SIMPLE, PHP_FILE_NAME, LS_INIT_MESSAGE);
+    createWorkspaceHelper.checkLanguageServerInitialization(
+        WEB_PHP_SIMPLE, PHP_FILE_NAME, LS_INIT_MESSAGE);
 
-    stackHelper.startCommandAndCheckResult(WEB_PHP_SIMPLE, RUN, "run php script", "Hello World!");
+    consoles.startCommandAndCheckResult(WEB_PHP_SIMPLE, RUN, "run php script", "Hello World!");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_PHP_SIMPLE, RUN, "start apache", "Starting Apache httpd web server apache2");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//*[text()='Hello World!']");
+    consoles.startCommandAndCheckApp(currentWindow, "//*[text()='Hello World!']");
 
-    stackHelper.startCommandAndCheckResult(WEB_PHP_SIMPLE, RUN, "restart apache", "...done");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//*[text()='Hello World!']");
+    consoles.startCommandAndCheckResult(WEB_PHP_SIMPLE, RUN, "restart apache", "...done");
+    consoles.startCommandAndCheckApp(currentWindow, "//*[text()='Hello World!']");
 
     // start 'stop apache' command and check that apache not running
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_PHP_SIMPLE, RUN, "stop apache", "Stopping Apache httpd web server apache2");
-    consoles.selectProcessByTabName("Terminal");
+    consoles.selectProcessInProcessConsoleTreeByName("Terminal");
     terminal.typeIntoTerminal("ps ax");
     terminal.typeIntoTerminal(ENTER.toString());
     terminal.waitExpectedTextNotPresentTerminal("/usr/sbin/apache2 -k start");
@@ -96,9 +102,9 @@ public class CreateWorkspaceFromPHPStackTest {
 
   @Test(priority = 1)
   public void checkWebPhpGaeSimpleCommands() {
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_PHP_GAE_SIMPLE, RUN, "web-php-gae-simple:run", "Starting admin server");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//input[@value='Sign Guestbook']");
-    stackHelper.closeProcessTabWithAskDialog("web-php-gae-simple:run");
+    consoles.startCommandAndCheckApp(currentWindow, "//input[@value='Sign Guestbook']");
+    consoles.closeProcessTabWithAskDialog("web-php-gae-simple:run");
   }
 }

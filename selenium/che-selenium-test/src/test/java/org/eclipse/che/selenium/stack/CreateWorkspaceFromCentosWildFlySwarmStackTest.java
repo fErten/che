@@ -19,6 +19,10 @@ import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.C
 import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -29,9 +33,12 @@ public class CreateWorkspaceFromCentosWildFlySwarmStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
   private static final String PROJECT_NAME = "wfswarm-rest-http";
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -48,15 +55,15 @@ public class CreateWorkspaceFromCentosWildFlySwarmStackTest {
   public void createWorkspaceFromCentosWildFlySwarmStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceFromStackWithProject(
+    createWorkspaceHelper.createWorkspaceFromStackWithProject(
         CENTOS_WILDFLY_SWARM, WORKSPACE_NAME, PROJECT_NAME);
 
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    currentWindow = ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(PROJECT_NAME);
+    projectExplorer.waitProjectInitialization(PROJECT_NAME);
 
-    stackHelper.startCommandAndCheckResult(PROJECT_NAME, BUILD, "build", BUILD_SUCCESS);
-    stackHelper.startCommandAndCheckResult(PROJECT_NAME, RUN, "run", "WildFly Swarm is Ready");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//h2[@id='_http_booster']");
+    consoles.startCommandAndCheckResult(PROJECT_NAME, BUILD, "build", BUILD_SUCCESS);
+    consoles.startCommandAndCheckResult(PROJECT_NAME, RUN, "run", "WildFly Swarm is Ready");
+    consoles.startCommandAndCheckApp(currentWindow, "//h2[@id='_http_booster']");
   }
 }

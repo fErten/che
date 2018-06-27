@@ -19,6 +19,10 @@ import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.D
 import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -34,9 +38,12 @@ public class CreateWorkspaceFromNETStackTest {
           "Finished language servers initialization, file path '/%s/%s'",
           PROJECT_NAME, CS_FILE_NAME);
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -53,25 +60,27 @@ public class CreateWorkspaceFromNETStackTest {
   public void checkWorkspaceCreationFromNETStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceFromStackWithProject(DOT_NET, WORKSPACE_NAME, PROJECT_NAME);
+    createWorkspaceHelper.createWorkspaceFromStackWithProject(
+        DOT_NET, WORKSPACE_NAME, PROJECT_NAME);
 
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    currentWindow = ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(PROJECT_NAME);
+    projectExplorer.waitProjectInitialization(PROJECT_NAME);
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, BUILD, "update dependencies", "Restore completed");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, BUILD, "dotnet-web-simple:update dependencies", "Restore completed");
 
-    stackHelper.startCommandAndCheckResult(PROJECT_NAME, RUN, "run", "Application started.");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//pre[text()='Hello World!']");
-    stackHelper.closeProcessTabWithAskDialog("run");
+    consoles.startCommandAndCheckResult(PROJECT_NAME, RUN, "run", "Application started.");
+    consoles.startCommandAndCheckApp(currentWindow, "//pre[text()='Hello World!']");
+    consoles.closeProcessTabWithAskDialog("run");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, RUN, "dotnet-web-simple:run", "Application started.");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//pre[text()='Hello World!']");
+    consoles.startCommandAndCheckApp(currentWindow, "//pre[text()='Hello World!']");
 
-    stackHelper.checkLanguageServerInitialization(PROJECT_NAME, CS_FILE_NAME, LS_INIT_MESSAGE);
+    createWorkspaceHelper.checkLanguageServerInitialization(
+        PROJECT_NAME, CS_FILE_NAME, LS_INIT_MESSAGE);
   }
 }

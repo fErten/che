@@ -16,6 +16,8 @@ import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.K
 import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -25,8 +27,9 @@ import org.testng.annotations.Test;
 public class CreateWorkspaceFromKotlinStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
 
+  @Inject private Ide ide;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
@@ -42,8 +45,8 @@ public class CreateWorkspaceFromKotlinStackTest {
 
   @Test
   public void createWorkspaceFromKotlinStack() {
-    stackHelper.createWorkspaceFromStackWithoutProject(KOTLIN, WORKSPACE_NAME);
+    createWorkspaceHelper.createWorkspaceFromStackWithoutProject(KOTLIN, WORKSPACE_NAME);
 
-    stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
   }
 }

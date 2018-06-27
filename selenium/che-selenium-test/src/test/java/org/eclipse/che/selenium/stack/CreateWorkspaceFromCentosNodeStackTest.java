@@ -19,6 +19,10 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -34,9 +38,12 @@ public class CreateWorkspaceFromCentosNodeStackTest {
   private ArrayList<String> projects = new ArrayList<>();
   private String currentWindow;
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -55,45 +62,46 @@ public class CreateWorkspaceFromCentosNodeStackTest {
 
   @Test
   public void checkWorkspaceCreationFromCentosNodeStack() {
-    stackHelper.createWorkspaceFromStackWithProjects(CENTOS_NODEJS, WORKSPACE_NAME, projects);
+    createWorkspaceHelper.createWorkspaceFromStackWithProjects(
+        CENTOS_NODEJS, WORKSPACE_NAME, projects);
 
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    currentWindow = ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(ANGULAR_PATTERNFLY_STARTER);
-    stackHelper.waitProjectInitialization(NODEJS_HELLO_WORLD);
-    stackHelper.waitProjectInitialization(WEB_NODEJS_SIMPLE);
+    projectExplorer.waitProjectInitialization(ANGULAR_PATTERNFLY_STARTER);
+    projectExplorer.waitProjectInitialization(NODEJS_HELLO_WORLD);
+    projectExplorer.waitProjectInitialization(WEB_NODEJS_SIMPLE);
   }
 
   @Test(priority = 1)
   public void checkAngularPatternfyStarterCommands() {
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         ANGULAR_PATTERNFLY_STARTER,
         BUILD,
         "angular-patternfly-starter:install dependencies",
         "bower_components/font-awesome");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         ANGULAR_PATTERNFLY_STARTER, RUN, "angular-patternfly-starter:run", "Waiting...");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//*[@id='pf-app']");
-    stackHelper.closeProcessTabWithAskDialog("angular-patternfly-starter:run");
+    consoles.startCommandAndCheckApp(currentWindow, "//*[@id='pf-app']");
+    consoles.closeProcessTabWithAskDialog("angular-patternfly-starter:run");
   }
 
   @Test(priority = 1)
   public void checkNodejsHelloWorldCommands() {
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         NODEJS_HELLO_WORLD, RUN, "nodejs-hello-world:run", "Example app listening on port 3000!");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//*[text()='Hello World!']");
-    stackHelper.closeProcessTabWithAskDialog("nodejs-hello-world:run");
+    consoles.startCommandAndCheckApp(currentWindow, "//*[text()='Hello World!']");
+    consoles.closeProcessTabWithAskDialog("nodejs-hello-world:run");
   }
 
   @Test(priority = 1)
   public void checkWebNodejsSimpleCommands() {
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_NODEJS_SIMPLE,
         BUILD,
         "web-nodejs-simple:install dependencies",
         "bower_components/angular");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_NODEJS_SIMPLE, RUN, "web-nodejs-simple:run", "Started connect web server");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//p[text()=' from the Yeoman team']");
+    consoles.startCommandAndCheckApp(currentWindow, "//p[text()=' from the Yeoman team']");
   }
 }

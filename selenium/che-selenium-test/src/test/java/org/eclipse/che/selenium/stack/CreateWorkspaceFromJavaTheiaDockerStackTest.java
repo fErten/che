@@ -18,6 +18,7 @@ import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
 import org.eclipse.che.selenium.core.webdriver.SeleniumWebDriverHelper;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.openqa.selenium.By;
 import org.testng.annotations.AfterClass;
@@ -29,7 +30,7 @@ public class CreateWorkspaceFromJavaTheiaDockerStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
 
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
   @Inject private SeleniumWebDriverHelper seleniumWebDriverHelper;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
@@ -46,7 +47,7 @@ public class CreateWorkspaceFromJavaTheiaDockerStackTest {
 
   @Test
   public void createWorkspaceFromJavaTheiaDockerStack() {
-    stackHelper.createWorkspaceFromStackWithoutProject(JAVA_THEIA_DOCKER, WORKSPACE_NAME);
+    createWorkspaceHelper.createWorkspaceFromStackWithoutProject(JAVA_THEIA_DOCKER, WORKSPACE_NAME);
 
     seleniumWebDriverHelper.waitAndSwitchToFrame(
         By.id("ide-application-iframe"), PREPARING_WS_TIMEOUT_SEC);

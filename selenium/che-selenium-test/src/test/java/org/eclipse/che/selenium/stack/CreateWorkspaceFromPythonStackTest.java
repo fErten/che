@@ -18,6 +18,10 @@ import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.P
 import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace;
 import org.testng.annotations.AfterClass;
@@ -34,10 +38,13 @@ public class CreateWorkspaceFromPythonStackTest {
           "Finished language servers initialization, file path '/%s/%s'",
           PROJECT_NAME, PYTHON_FILE_NAME);
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private NewWorkspace newWorkspace;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -52,16 +59,17 @@ public class CreateWorkspaceFromPythonStackTest {
 
   @Test
   public void checkWorkspaceCreationFromPythonStack() {
-    stackHelper.createWorkspaceFromStackWithProject(PYTHON, WORKSPACE_NAME, PROJECT_NAME);
+    createWorkspaceHelper.createWorkspaceFromStackWithProject(PYTHON, WORKSPACE_NAME, PROJECT_NAME);
 
-    stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(PROJECT_NAME);
+    projectExplorer.waitProjectInitialization(PROJECT_NAME);
 
-    stackHelper.startCommandAndCheckResult(PROJECT_NAME, RUN, "run", "Hello, world!");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(PROJECT_NAME, RUN, "run", "Hello, world!");
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, RUN, "console-python3-simple:run", "Hello, world!");
 
-    stackHelper.checkLanguageServerInitialization(PROJECT_NAME, PYTHON_FILE_NAME, LS_INIT_MESSAGE);
+    createWorkspaceHelper.checkLanguageServerInitialization(
+        PROJECT_NAME, PYTHON_FILE_NAME, LS_INIT_MESSAGE);
   }
 }

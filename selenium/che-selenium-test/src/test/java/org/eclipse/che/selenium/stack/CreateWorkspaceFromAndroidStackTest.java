@@ -20,6 +20,10 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
+import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -33,9 +37,12 @@ public class CreateWorkspaceFromAndroidStackTest {
 
   private ArrayList<String> projects = new ArrayList<>();
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
+  @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
 
   @BeforeClass
@@ -53,19 +60,18 @@ public class CreateWorkspaceFromAndroidStackTest {
 
   @Test
   public void checkWorkspaceCreationFromAndroidStack() {
-    stackHelper.createWorkspaceFromStackWithProjects(ANDROID, WORKSPACE_NAME, projects);
+    createWorkspaceHelper.createWorkspaceFromStackWithProjects(ANDROID, WORKSPACE_NAME, projects);
 
-    stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(MOBILE_ANDROID_HELLO_WORLD);
-    stackHelper.waitProjectInitialization(MOBILE_ANDROID_SIMPLE);
+    projectExplorer.waitProjectInitialization(MOBILE_ANDROID_HELLO_WORLD);
+    projectExplorer.waitProjectInitialization(MOBILE_ANDROID_SIMPLE);
 
-    stackHelper.startCommandAndCheckResult(
-        MOBILE_ANDROID_HELLO_WORLD, BUILD, "build", BUILD_SUCCESS);
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(MOBILE_ANDROID_HELLO_WORLD, BUILD, "build", BUILD_SUCCESS);
+    consoles.startCommandAndCheckResult(
         MOBILE_ANDROID_HELLO_WORLD, RUN, "mobile-android-hello-world:run", BUILD_SUCCESS);
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         MOBILE_ANDROID_SIMPLE, RUN, "mobile-android-simple:build", BUILD_SUCCESS);
   }
 }

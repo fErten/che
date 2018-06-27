@@ -23,7 +23,9 @@ import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
 import org.eclipse.che.selenium.pageobject.CheTerminal;
 import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
 import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -37,10 +39,11 @@ public class CreateWorkspaceFromEclipseCheStackTest {
 
   private ArrayList<String> projects = new ArrayList<>();
 
-  @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
-  @Inject private DefaultTestUser defaultTestUser;
+  @Inject private Ide ide;
   @Inject private Consoles consoles;
+  @Inject private Dashboard dashboard;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
+  @Inject private DefaultTestUser defaultTestUser;
   @Inject private CheTerminal terminal;
   @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
@@ -62,37 +65,38 @@ public class CreateWorkspaceFromEclipseCheStackTest {
   public void checkWorkspaceCreationFromEclipseCheStack() {
     String currentWindow;
 
-    stackHelper.createWorkspaceFromStackWithProjects(ECLIPSE_CHE, WORKSPACE_NAME, projects);
+    createWorkspaceHelper.createWorkspaceFromStackWithProjects(
+        ECLIPSE_CHE, WORKSPACE_NAME, projects);
 
-    currentWindow = stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    currentWindow = ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(CONSOLE_JAVA_SIMPLE);
-    stackHelper.waitProjectInitialization(WEB_JAVA_SPRING);
+    projectExplorer.waitProjectInitialization(CONSOLE_JAVA_SIMPLE);
+    projectExplorer.waitProjectInitialization(WEB_JAVA_SPRING);
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         CONSOLE_JAVA_SIMPLE, BUILD, "console-java-simple:build", "BUILD SUCCESS");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         CONSOLE_JAVA_SIMPLE, RUN, "console-java-simple:run", "Hello World Che!");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_JAVA_SPRING, BUILD, "web-java-spring:build", "BUILD SUCCESS");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_JAVA_SPRING, RUN, "web-java-spring:build and run", "Server startup in");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//span[text()='Enter your name: ']");
-    stackHelper.closeProcessTabWithAskDialog("web-java-spring:build and run");
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckApp(currentWindow, "//span[text()='Enter your name: ']");
+    consoles.closeProcessTabWithAskDialog("web-java-spring:build and run");
+    consoles.startCommandAndCheckResult(
         WEB_JAVA_SPRING, RUN, "web-java-spring:run tomcat", "Server startup in");
-    stackHelper.startCommandAndCheckApp(currentWindow, "//span[text()='Enter your name: ']");
+    consoles.startCommandAndCheckApp(currentWindow, "//span[text()='Enter your name: ']");
 
     // start 'stop apache' command and check that apache not running
     projectExplorer.invokeCommandWithContextMenu(
         RUN, WEB_JAVA_SPRING, "web-java-spring:stop tomcat");
-    consoles.selectProcessByTabName("Terminal");
+    consoles.selectProcessInProcessConsoleTreeByName("Terminal");
     terminal.typeIntoTerminal("ps ax");
     terminal.typeIntoTerminal(ENTER.toString());
     terminal.waitExpectedTextNotPresentTerminal("/bin/bash -c $TOMCAT_HOME/bin/catalina.sh");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         WEB_JAVA_SPRING,
         DEBUG,
         "web-java-spring:debug",

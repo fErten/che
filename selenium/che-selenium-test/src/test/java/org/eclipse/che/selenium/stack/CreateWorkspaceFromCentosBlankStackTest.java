@@ -17,7 +17,10 @@ import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
 import org.eclipse.che.selenium.pageobject.CodenvyEditor;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
 import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -28,9 +31,11 @@ public class CreateWorkspaceFromCentosBlankStackTest {
   private static final String WORKSPACE_NAME = generate("workspace", 4);
   private static final String PROJECT_NAME = "blank-project";
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
   @Inject private CodenvyEditor editor;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private DefaultTestUser defaultTestUser;
   @Inject private ProjectExplorer projectExplorer;
   @Inject private TestWorkspaceServiceClient workspaceServiceClient;
@@ -47,11 +52,12 @@ public class CreateWorkspaceFromCentosBlankStackTest {
 
   @Test
   public void createWorkspaceFromCentosBlankStack() {
-    stackHelper.createWorkspaceFromStackWithProject(CENTOS_BLANK, WORKSPACE_NAME, PROJECT_NAME);
+    createWorkspaceHelper.createWorkspaceFromStackWithProject(
+        CENTOS_BLANK, WORKSPACE_NAME, PROJECT_NAME);
 
-    stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(PROJECT_NAME);
+    projectExplorer.waitProjectInitialization(PROJECT_NAME);
 
     projectExplorer.openItemByPath(PROJECT_NAME);
     projectExplorer.openItemByPath(PROJECT_NAME + "/README.md");

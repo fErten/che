@@ -18,7 +18,10 @@ import static org.eclipse.che.selenium.pageobject.dashboard.NewWorkspace.Stack.C
 import com.google.inject.Inject;
 import org.eclipse.che.selenium.core.client.TestWorkspaceServiceClient;
 import org.eclipse.che.selenium.core.user.DefaultTestUser;
+import org.eclipse.che.selenium.pageobject.Consoles;
+import org.eclipse.che.selenium.pageobject.Ide;
 import org.eclipse.che.selenium.pageobject.ProjectExplorer;
+import org.eclipse.che.selenium.pageobject.dashboard.CreateWorkspaceHelper;
 import org.eclipse.che.selenium.pageobject.dashboard.Dashboard;
 import org.eclipse.che.selenium.pageobject.intelligent.CommandsPalette;
 import org.testng.annotations.AfterClass;
@@ -34,8 +37,10 @@ public class CreateWorkspaceFromCeylonWithJavaStackTest {
   private static final String MODULE_STARTED_MESSAGE =
       "Hello World from Ceylon on the following backend : ";
 
+  @Inject private Ide ide;
+  @Inject private Consoles consoles;
   @Inject private Dashboard dashboard;
-  @Inject private StackHelper stackHelper;
+  @Inject private CreateWorkspaceHelper createWorkspaceHelper;
   @Inject private ProjectExplorer projectExplorer;
   @Inject private DefaultTestUser defaultTestUser;
   @Inject private CommandsPalette commandsPalette;
@@ -53,26 +58,26 @@ public class CreateWorkspaceFromCeylonWithJavaStackTest {
 
   @Test
   public void checkWorkspaceCreationFromCeylonStack() {
-    stackHelper.createWorkspaceFromStackWithProject(
+    createWorkspaceHelper.createWorkspaceFromStackWithProject(
         CEYLON_WITH_JAVA_JAVASCRIPT, WORKSPACE_NAME, PROJECT_NAME);
 
-    stackHelper.switchToIdeAndWaitWorkspaceIsReadyToUse();
+    ide.switchToIdeAndWaitWorkspaceIsReadyToUse();
 
-    stackHelper.waitProjectInitialization(PROJECT_NAME);
+    projectExplorer.waitProjectInitialization(PROJECT_NAME);
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, BUILD, "compile for JVM", MODULE_COMPILED_MESSAGE);
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, RUN, "Run on JVM", MODULE_STARTED_MESSAGE + "jvm !");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, BUILD, "compile for JS", MODULE_COMPILED_MESSAGE);
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, RUN, "Run on NodeJS", MODULE_STARTED_MESSAGE + "js !");
 
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, BUILD, "compile for Dart", MODULE_COMPILED_MESSAGE);
-    stackHelper.startCommandAndCheckResult(
+    consoles.startCommandAndCheckResult(
         PROJECT_NAME, RUN, "Run on Dart", MODULE_STARTED_MESSAGE + "dartvm !");
 
     projectExplorer.openItemByPath(PROJECT_NAME);
